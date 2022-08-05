@@ -6,8 +6,7 @@
 </template>
 
 <script>
-// @ is an alias to /src
-import Upload from '@/components/Upload.vue'
+import Upload from '../components/Upload.vue'
 
 export default {
   name: 'Home',
