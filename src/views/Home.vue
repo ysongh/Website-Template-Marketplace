@@ -1,18 +1,23 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <Upload />
+    <v-btn
+      color="orange"
+      elevation="2"
+      @click="goToFormPage()"
+    >
+      Post Contract
+    </v-btn>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import Upload from '@/components/Upload.vue'
 
 export default {
   name: 'Home',
-  components: {
-    Upload
+  methods: {
+    goToFormPage() {
+      this.$router.push('/add-template')
+    },
   }
 }
 </script>
