@@ -1,12 +1,13 @@
 <template>
   <div class="home">
     <img alt="Vue logo" src="../assets/logo.png">
-    <Upload msg="Welcome to Your Vue.js App"/>
+    <Upload />
   </div>
 </template>
 
 <script>
-import Upload from '../components/Upload.vue'
+// @ is an alias to /src
+import Upload from '@/components/Upload.vue'
 
 export default {
   name: 'Home',
