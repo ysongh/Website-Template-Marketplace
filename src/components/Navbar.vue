@@ -4,45 +4,50 @@
     color="primary"
     dark
   >
-    <div class="d-flex align-center">
-      <v-img
-        alt="Vuetify Logo"
-        class="shrink mr-2"
-        contain
-        src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-        transition="scale-transition"
-        width="40"
-      />
+    <router-link :to="{ path: '/'}" class="nav-link">
+      <p>Website Template Marketplace</p>
+    </router-link>
 
-      <v-img
-        alt="Vuetify Name"
-        class="shrink mt-1 hidden-sm-and-down"
-        contain
-        min-width="100"
-        src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-        width="100"
-      />
-    </div>
+    <router-link :to="{ path: '/'}" class="nav-link">
+      Home
+    </router-link>
 
     <v-spacer></v-spacer>
 
     <v-btn
-      href="https://github.com/vuetifyjs/vuetify/releases/latest"
-      target="_blank"
-      text
+      @click="connectToBlockchain()"
     >
-      <span class="mr-2">Latest Release</span>
-      <v-icon>mdi-open-in-new</v-icon>
+      <span class="mr-2">{{ formatWalletAddress(walletAddress) }}</span>
     </v-btn>
   </v-app-bar>
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
-  name: "Navbar"
+  name: "Navbar",
+  computed: mapGetters(['walletAddress']),
+  methods: {
+    ...mapActions(['connectToBlockchain']),
+    formatWalletAddress(address) {
+      if(address) return address.substring(0,8) + "..." + address.substring(34,42);
+      else return "Connect Wallet"
+    }
+  }
 }
 </script>
 
 <style>
-
+  .nav-link {
+    text-decoration: none;
+    font-size: 1.2rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    color: #fff !important;
+  }
+  
+  .nav-link:hover {
+     color: rgb(184, 193, 203) !important;
+  }
 </style>
