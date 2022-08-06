@@ -66,6 +66,7 @@
 
 <script>
 import { NFTStorage, File } from 'nft.storage'
+import { saveAs } from "file-saver"
 import LitJsSdk from 'lit-js-sdk'
 
 import { NFT_STORAGE_APIKEY } from '../config'
@@ -131,7 +132,7 @@ export default {
           authSig
         })
 
-        console.warn("_symmetricKey:", _symmetricKey);
+        console.warn("_symmetricKey:", _symmetricKey)
 
         const decryptedFile = await LitJsSdk.decryptFile({
           file: encryptedFile,
@@ -140,8 +141,10 @@ export default {
 
         console.warn("decryptedFile:", decryptedFile)
 
-        const imageblob = new Blob([decryptedFile]);
+        const imageblob = new Blob([decryptedFile])
         console.warn(imageblob)
+
+        saveAs(imageblob, "test.png");
 
         // const prepareToUpload = new File(
         // [JSON.stringify(
