@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
-import AddTemplate from '../views/AddTemplate.vue';
+import AddTemplate from '../views/AddTemplate.vue'
+import TemplateDetail from '../views/TemplateDetail'
 
 Vue.use(VueRouter)
 
@@ -15,6 +16,11 @@ const routes = [
     path: '/add-template',
     name: 'AddTemplate',
     component: AddTemplate
+  },
+  {
+    path: '/template/:id',
+    name: 'TemplateDetail',
+    component: TemplateDetail
   },
   {
     path: '/about',

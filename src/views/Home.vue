@@ -12,33 +12,32 @@
       </v-btn>
     </div>
     
-    <v-row>
-      <div v-bind:key="template.tokenId" v-for="template of templates">
-        <v-col
-          sm="12"
-          md="4"
+    <v-row v-bind:key="template.tokenId" v-for="template of templates">
+      <v-col
+        sm="12"
+        md="4"
+      >
+        <v-card
+          class="pa-2"
+          outlined
+          tile
         >
-          <v-card
-            class="pa-2"
-            outlined
-            tile
-          >
-            <v-img
-              height="250"
-              src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
-            ></v-img>
-            <h2>Template {{ template.tokenId }}</h2>
-            <v-card-actions>
-              <v-btn
-                color="deep-purple lighten-2"
-                block
-              >
-                Reserve
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-col>
-      </div>
+          <v-img
+            height="250"
+            src="https://images.unsplash.com/photo-1573867639040-6dd25fa5f597?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTV8fHdlYnNpdGV8ZW58MHx8MHx8&auto=format&fit=crop&w=800&q=60"
+          ></v-img>
+          <h2>Template {{ template.tokenId }}</h2>
+          <v-card-actions>
+            <v-btn
+              color="deep-purple lighten-2"
+              block
+              @click="goToDetailpage(template.tokenId)"
+            >
+              View
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -56,6 +55,9 @@ export default {
     goToFormPage() {
       this.$router.push('/add-template')
     },
+    goToDetailpage(id) {
+      this.$router.push('/template/' + id);
+    }
   },
   watch: {
     wtmContract: async function () {
