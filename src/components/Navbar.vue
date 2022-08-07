@@ -3,6 +3,7 @@
     app
     color="yellow"
     dark
+    class="px-10"
   >
     <router-link :to="{ path: '/'}">
       <img
