@@ -15,7 +15,7 @@ export default new Vuex.Store({
   },
   getters: {
     walletAddress: state => state.walletAddress,
-    wtmContract: state => state.walletAddress,
+    wtmContract: state => state.wtmContract,
   },
   mutations: {
     setWalletAddress: (state, walletAddress) => (state.walletAddress = walletAddress),

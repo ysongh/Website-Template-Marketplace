@@ -3,7 +3,7 @@
     <v-card
       class="mx-auto my-5 pt-3"
       elevation="2"
-      max-width="800"
+      max-width="600"
     >
       <v-card-text>
         <h1>Add Your Website Template</h1>
@@ -17,14 +17,6 @@
             clearable
           ></v-text-field>
 
-          <input
-            type="file"
-            label="Upload Image"
-            outlined
-            dense
-            prepend-icon="mdi-camera"
-            @change="previewFiles">
-
           <v-textarea
             solo
             class="mb-0"
@@ -33,13 +25,17 @@
             v-model="description"
           ></v-textarea>
 
-          <v-textarea
-            solo
-            class="mb-0"
-            rows="10"
-            label="Code"
-            v-model="code"
-          ></v-textarea>
+          <label for="code"><strong>Upload your Code</strong></label>
+          <br>
+          <input
+            id="code"
+            class="mb-4"
+            type="file"
+            label="Upload Image"
+            outlined
+            dense
+            prepend-icon="mdi-camera"
+            @change="previewFiles">
 
           <v-btn
             v-if="!loading"
@@ -66,6 +62,7 @@
 
 <script>
 import { NFTStorage, File } from 'nft.storage'
+import { mapGetters } from 'vuex'
 import { saveAs } from "file-saver"
 import LitJsSdk from 'lit-js-sdk'
 
@@ -79,12 +76,12 @@ export default {
     loading: false,
     title: "",
     description: "",
-    code: "",
     file: null,
   }),
   computed: {
+    ...mapGetters(['wtmContract']),
     isDisabled() {
-      return !this.title || !this.description || !this.code;
+      return !this.title || !this.description || !this.wtmContract
     },
   },
   methods: {
@@ -93,6 +90,8 @@ export default {
     },
     async uploadToIPFS() {
       try{
+        const count = await this.wtmContract.templateIds();
+        console.log(count.toString());
         const chain = 'mumbai'
         const authSig = await LitJsSdk.checkAndSignAuthMessage({chain})
         const accessControlConditions = [
@@ -134,31 +133,37 @@ export default {
 
         console.warn("_symmetricKey:", _symmetricKey)
 
-        const decryptedFile = await LitJsSdk.decryptFile({
-          file: encryptedFile,
-          symmetricKey
-        });
+        // const decryptedFile = await LitJsSdk.decryptFile({
+        //   file: encryptedFile,
+        //   symmetricKey
+        // });
 
-        console.warn("decryptedFile:", decryptedFile)
+        // console.warn("decryptedFile:", decryptedFile)
 
-        const imageblob = new Blob([decryptedFile])
-        console.warn(imageblob)
+        // const imageblob = new Blob([decryptedFile])
+        // console.warn(imageblob)
 
-        saveAs(imageblob, "test.png");
+        // saveAs(imageblob, "test.png");
 
-        // const prepareToUpload = new File(
-        // [JSON.stringify(
-        //   {
-        //     title: this.title,
-        //     description: this.description,
-        //     code: this.code
-        //   },
-        //   null,
-        //   2
-        // )], 'metadata.json')
+        const prepareToUpload = new File(
+        [JSON.stringify(
+          {
+            title: this.title,
+            description: this.description,
+            encryptedSymmetricKey,
+            encryptedFile
+          },
+          null,
+          2
+        )], 'metadata.json')
 
-        // const cid = await client.storeDirectory([prepareToUpload])
-        // console.log(cid)
+        const cid = await client.storeDirectory([prepareToUpload])
+        console.log(cid)
+
+        const transaction = await this.wtmContract.createTemplate(cid);
+        const tx = await transaction.wait();
+        console.log(tx);
+
         this.$router.push('/')
       } catch(error) {
         console.log(error)
