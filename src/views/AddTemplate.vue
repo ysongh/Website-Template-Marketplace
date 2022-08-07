@@ -63,7 +63,6 @@
 <script>
 import { NFTStorage, File } from 'nft.storage'
 import { mapGetters } from 'vuex'
-import { saveAs } from "file-saver"
 import LitJsSdk from 'lit-js-sdk'
 
 import { NFT_STORAGE_APIKEY } from '../config'

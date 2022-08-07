@@ -12,6 +12,7 @@
             <v-btn
               v-if="template.isBrought"
               color="orange"
+              @click="downloadFile()"
             >
               Download Code
             </v-btn>
@@ -35,6 +36,8 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { saveAs } from "file-saver"
+import LitJsSdk from 'lit-js-sdk'
 
 export default {
   name: "TemplateDetail",
@@ -51,6 +54,27 @@ export default {
 
       const template = await this.wtmContract.listOfTemplate(this.$route.params.id)
       this.template = template
+    },
+    async downloadFile() {
+      try{
+        const toDecrypt = LitJsSdk.uint8arrayToString(new Uint8Array(this.ipfsData.encryptedSymmetricKey), 'base16')
+        console.log("toDecrypt:", toDecrypt);
+
+        const decryptedFile = await LitJsSdk.decryptFile({
+          file: this.ipfsData.encryptedFile,
+          symmetricKey: this.ipfsData.encryptedSymmetricKey
+        });
+
+        console.warn("decryptedFile:", decryptedFile)
+
+        const imageblob = new Blob([decryptedFile])
+        console.warn(imageblob)
+
+        saveAs(imageblob, "website.html");
+      } catch(error) {
+        console.log(error)
+        this.loading = false
+      }
     }
   },
   async created() {
