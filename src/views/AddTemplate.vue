@@ -42,7 +42,7 @@
             class="mb-4"
             @click="uploadToIPFS()"
             block
-            color="primary"
+            color="yellow"
             :disabled=isDisabled
           >
             Create
@@ -54,6 +54,9 @@
               color="primary"
             ></v-progress-circular>
           </div>
+
+          <p v-if="cid">ipfs://{{ cid }}</p>
+          <p v-if="tx">tx: {{ tx }}</p>
         </form>
       </v-card-text>
     </v-card>
@@ -66,6 +69,7 @@ import { mapGetters } from 'vuex'
 import LitJsSdk from 'lit-js-sdk'
 
 import { NFT_STORAGE_APIKEY } from '../config'
+import { blobToDataURI } from '../helpers/convertMethods'
 
 const client = new NFTStorage({ token: NFT_STORAGE_APIKEY })
 
@@ -76,6 +80,8 @@ export default {
     title: "",
     description: "",
     file: null,
+    cid: "",
+    tx: ""
   }),
   computed: {
     ...mapGetters(['wtmContract']),
@@ -132,25 +138,13 @@ export default {
 
         console.warn("_symmetricKey:", _symmetricKey)
 
-        // const decryptedFile = await LitJsSdk.decryptFile({
-        //   file: encryptedFile,
-        //   symmetricKey
-        // });
-
-        // console.warn("decryptedFile:", decryptedFile)
-
-        // const imageblob = new Blob([decryptedFile])
-        // console.warn(imageblob)
-
-        // saveAs(imageblob, "test.png");
-
         const prepareToUpload = new File(
         [JSON.stringify(
           {
             title: this.title,
             description: this.description,
-            encryptedSymmetricKey,
-            encryptedFile
+            encryptedSymmetricKey: Array.from(encryptedSymmetricKey),
+            encryptedFile: await blobToDataURI(encryptedFile)
           },
           null,
           2
@@ -158,12 +152,12 @@ export default {
 
         const cid = await client.storeDirectory([prepareToUpload])
         console.log(cid)
+        this.cid = cid;
 
-        const transaction = await this.wtmContract.createTemplate(cid);
-        const tx = await transaction.wait();
-        console.log(tx);
-
-        this.$router.push('/')
+        const transaction = await this.wtmContract.createTemplate(cid)
+        const tx = await transaction.wait()
+        console.log(tx)
+        this.tx = tx.transactionHash
       } catch(error) {
         console.log(error)
         this.loading = false

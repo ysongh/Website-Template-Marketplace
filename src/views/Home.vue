@@ -12,10 +12,11 @@
       </v-btn>
     </div>
     
-    <v-row v-bind:key="template.tokenId" v-for="template of templates">
+    <v-row >
       <v-col
         sm="12"
         md="4"
+        v-bind:key="template.tokenId" v-for="template of templates"
       >
         <v-card
           class="pa-2"
@@ -29,7 +30,7 @@
           <h2>Template {{ template.tokenId }}</h2>
           <v-card-actions>
             <v-btn
-              color="deep-purple lighten-2"
+              color="yellow"
               block
               @click="goToDetailpage(template.tokenId)"
             >

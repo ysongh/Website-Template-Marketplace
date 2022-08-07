@@ -10,20 +10,21 @@
           </v-card-text>
           <v-card-actions>
             <v-btn
-              v-if="template.isBrought"
-              color="orange"
+              v-if="!template.isBrought"
+              color="yellow"
               @click="downloadFile()"
             >
               Download Code
             </v-btn>
             <v-btn
               v-else
-              color="orange"
+              color="yellow"
               @click="purchase()"
             >
               Purchase and Mint
             </v-btn>
           </v-card-actions>
+          <p v-if="tx">tx: {{ tx }}</p>
         </v-card>
       </v-col>
         <v-col
@@ -39,30 +40,59 @@ import { mapGetters } from 'vuex'
 import { saveAs } from "file-saver"
 import LitJsSdk from 'lit-js-sdk'
 
+import { dataURItoBlob } from '../helpers/convertMethods'
+
 export default {
   name: "TemplateDetail",
   data: () => ({
     template: {},
-    ipfsData: {}
+    ipfsData: {},
+    tx: ""
   }),
   computed: mapGetters(['wtmContract']),
   methods: {
     async purchase() {
-      const transaction = await this.wtmContract.mintTemplate(this.$route.params.id);
-      const tx = await transaction.wait();
+      const transaction = await this.wtmContract.mintTemplate(this.$route.params.id)
+      const tx = await transaction.wait()
       console.log(tx);
+       this.tx = tx.transactionHash
 
       const template = await this.wtmContract.listOfTemplate(this.$route.params.id)
       this.template = template
     },
     async downloadFile() {
       try{
+        const chain = 'mumbai'
+        const authSig = await LitJsSdk.checkAndSignAuthMessage({chain})
+        const accessControlConditions = [
+          {
+            contractAddress: '',
+            standardContractType: '',
+            chain: 'mumbai',
+            method: 'eth_getBalance',
+            parameters: [':userAddress', 'latest'],
+            returnValueTest: {
+              comparator: '>=',
+              value: '0',  // 0 ETH, so anyone can open
+            },
+          },
+        ];
+
         const toDecrypt = LitJsSdk.uint8arrayToString(new Uint8Array(this.ipfsData.encryptedSymmetricKey), 'base16')
         console.log("toDecrypt:", toDecrypt);
 
+        const _symmetricKey = await window.litNodeClient.getEncryptionKey({
+          accessControlConditions,
+          toDecrypt,
+          chain,
+          authSig
+        })
+
+      console.warn("_symmetricKey:", _symmetricKey);
+
         const decryptedFile = await LitJsSdk.decryptFile({
-          file: this.ipfsData.encryptedFile,
-          symmetricKey: this.ipfsData.encryptedSymmetricKey
+          file: dataURItoBlob(this.ipfsData.encryptedFile),
+          symmetricKey: _symmetricKey
         });
 
         console.warn("decryptedFile:", decryptedFile)
