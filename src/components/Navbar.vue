@@ -1,11 +1,15 @@
 <template>
   <v-app-bar
     app
-    color="primary"
+    color="yellow"
     dark
   >
-    <router-link :to="{ path: '/'}" class="nav-link">
-      <p>Website Template Marketplace</p>
+    <router-link :to="{ path: '/'}">
+      <img
+        class="logo"
+        alt="Logo"
+        src="../assets/logo.png"
+      >
     </router-link>
 
     <router-link :to="{ path: '/'}" class="nav-link">
@@ -39,15 +43,20 @@ export default {
 </script>
 
 <style>
+  .logo {
+    width: 150px;
+    margin-top: .5rem;
+    margin-right: 2rem;
+  }
   .nav-link {
     text-decoration: none;
     font-size: 1.2rem;
     margin-left: 1rem;
     margin-right: 1rem;
-    color: #fff !important;
+    color: rgb(0, 0, 0) !important;
   }
   
   .nav-link:hover {
-     color: rgb(184, 193, 203) !important;
+     color: rgb(77, 79, 81) !important;
   }
 </style>
