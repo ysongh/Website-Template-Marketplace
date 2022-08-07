@@ -3,6 +3,9 @@ import Vuex from 'vuex'
 import { ethers } from 'ethers'
 import Web3Modal from 'web3modal'
 
+import { CONTRACT_ADDRESS }  from '../config'
+import WebsiteTemplateMarketplace from '../artifacts/contracts/WebsiteTemplateMarketplace.sol/WebsiteTemplateMarketplace.json'
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -16,6 +19,7 @@ export default new Vuex.Store({
   },
   mutations: {
     setWalletAddress: (state, walletAddress) => (state.walletAddress = walletAddress),
+    setContract: (state, wtmContract) => (state.wtmContract = wtmContract),
   },
   actions: {
     async connectToBlockchain({ commit }) {
@@ -27,6 +31,9 @@ export default new Vuex.Store({
       const signer = provider.getSigner();
       const address = await signer.getAddress();
       commit('setWalletAddress', address);
+
+      const contract = new ethers.Contract(CONTRACT_ADDRESS, WebsiteTemplateMarketplace.abi, signer);
+      commit('setContract', contract);
     }
   },
   modules: {
